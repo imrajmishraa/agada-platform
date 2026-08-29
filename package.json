@@ -1,0 +1,13 @@
+{
+  "name": "agada-platform",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/backend/*"
+  ],
+  "scripts": {
+    "dev": "docker-compose up",
+    "test": "jest",
+    "build": "npm run build --workspaces"
+  }
+}
