@@ -1,0 +1,12 @@
+{
+  "name": "@agada/triage-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Digital Triage & ML Risk Scoring Service (Python)",
+  "scripts": {
+    "dev": "uvicorn src.main:app --reload --host 0.0.0.0 --port 3003",
+    "build": "echo 'No build required'",
+    "test": "pytest",
+    "lint": "flake8 src"
+  }
+}
