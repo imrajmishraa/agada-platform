@@ -10,9 +10,15 @@ module.exports = {
     '^@agada/shared$': '<rootDir>/packages/shared/src',
     '^@agada/shared/(.*)$': '<rootDir>/packages/shared/src/$1',
   },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.json',
-    },
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  transform: {
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+        useESM: true,
+      },
+    ],
   },
 };
