@@ -47,9 +47,10 @@ redis_data/
 elasticsearch_data/
 minio_data/
 
-
-**/dist/
-**/node_modules/
-**/*.js
-**/*.d.ts
-**/*.map
+# Only ignore generated JS/d.ts/map files inside build outputs
+**/dist/**/*.js
+**/dist/**/*.d.ts
+**/dist/**/*.map
+**/build/**/*.js
+**/build/**/*.d.ts
+**/build/**/*.map
