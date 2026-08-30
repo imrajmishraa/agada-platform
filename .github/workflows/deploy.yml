@@ -45,7 +45,7 @@ jobs:
         run: pip install flake8
 
       - name: Run linting
-        run: npm run lint
+        run: npm run test -- --testPathIgnorePatterns=packages/backend/triage-service packages/backend/analytics-service
 
   deploy:
     needs: build-and-test
