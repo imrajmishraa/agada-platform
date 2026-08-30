@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
@@ -11,14 +11,20 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
-      "@agada/shared": ["packages/shared/src"],
-      "@agada/shared/*": ["packages/shared/src/*"],
-      "@agada/types": ["packages/shared/src/types"],
-      "@agada/utils": ["packages/shared/src/utils"],
-      "@agada/constants": ["packages/shared/src/constants"]
+      "@agada/shared": ["./packages/shared/src"],
+      "@agada/shared/*": ["./packages/shared/src/*"],
+      "@agada/types": ["./packages/shared/src/types"],
+      "@agada/utils": ["./packages/shared/src/utils"],
+      "@agada/constants": ["./packages/shared/src/constants"]
     }
   },
-  "exclude": ["node_modules", "dist", "build"]
+  "exclude": ["node_modules", "dist", "build"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext"
+    }
+  }
 }

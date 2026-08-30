@@ -1,20 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import { query, run, initDatabase } from '../database';
 
-export class SyncService {
-  private static instance: SyncService;
+export class SimpleSyncService {
+  private static instance: SimpleSyncService;
   private isSyncing = false;
 
-  static getInstance(): SyncService {
-    if (!SyncService.instance) {
-      SyncService.instance = new SyncService();
+  static getInstance(): SimpleSyncService {
+    if (!SimpleSyncService.instance) {
+      SimpleSyncService.instance = new SimpleSyncService();
     }
-    return SyncService.instance;
-  }
-
-  async initialize() {
-    await initDatabase();
+    return SimpleSyncService.instance;
   }
 
   async sync(): Promise<void> {
@@ -23,14 +18,18 @@ export class SyncService {
 
     this.isSyncing = true;
     try {
-      const pendingRecords = await query('SELECT * FROM pending_records WHERE synced = 0');
+      // Get pending records
+      const pendingRecords = await this.getPendingRecords();
 
       if (pendingRecords.length === 0) {
         await this.updateSyncStatus();
         return;
       }
 
+      // Group by service
       const grouped = this.groupByService(pendingRecords);
+
+      // Sync each group
       for (const [service, records] of Object.entries(grouped)) {
         await this.syncToService(service, records);
       }
@@ -41,6 +40,14 @@ export class SyncService {
     } finally {
       this.isSyncing = false;
     }
+  }
+
+  private async getPendingRecords(): Promise<any[]> {
+    const stored = await AsyncStorage.getItem('pending_records');
+    if (!stored) return [];
+    const records = JSON.parse(stored);
+    // Return only unsynced records
+    return records.filter((r: any) => !r.synced);
   }
 
   private groupByService(records: any[]): Record<string, any[]> {
@@ -64,20 +71,23 @@ export class SyncService {
     });
 
     if (response.ok) {
-      const ids = records.map(r => r.id);
-      const placeholders = ids.map(() => '?').join(',');
-      await run(
-        `UPDATE pending_records SET synced = 1, synced_at = ? WHERE id IN (${placeholders})`,
-        [Date.now(), ...ids]
-      );
-    } else {
-      for (const record of records) {
-        await run(
-          'UPDATE pending_records SET attempts = attempts + 1 WHERE id = ?',
-          [record.id]
-        );
-      }
+      await this.markSynced(records);
     }
+  }
+
+  private async markSynced(records: any[]): Promise<void> {
+    const stored = await AsyncStorage.getItem('pending_records');
+    const allRecords = stored ? JSON.parse(stored) : [];
+    const recordIds = records.map(r => r.id);
+    
+    const updatedRecords = allRecords.map((r: any) => {
+      if (recordIds.includes(r.id)) {
+        return { ...r, synced: true, syncedAt: new Date().toISOString() };
+      }
+      return r;
+    });
+
+    await AsyncStorage.setItem('pending_records', JSON.stringify(updatedRecords));
   }
 
   private async getToken(): Promise<string> {
@@ -88,22 +98,17 @@ export class SyncService {
     await AsyncStorage.setItem('last_sync', new Date().toISOString());
   }
 
+  // Add a record to be synced later
   async addPendingRecord(record: any): Promise<void> {
-    await run(
-      `INSERT INTO pending_records 
-       (id, record_id, service, operation, data, created_at, updated_at, synced, attempts)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        Date.now().toString(),
-        record.recordId || record.id,
-        record.service,
-        record.operation,
-        JSON.stringify(record.data),
-        Date.now(),
-        Date.now(),
-        0,
-        0,
-      ]
-    );
+    const stored = await AsyncStorage.getItem('pending_records');
+    const records = stored ? JSON.parse(stored) : [];
+    records.push({
+      ...record,
+      id: Date.now().toString(),
+      synced: false,
+      createdAt: new Date().toISOString(),
+      attempts: 0,
+    });
+    await AsyncStorage.setItem('pending_records', JSON.stringify(records));
   }
 }

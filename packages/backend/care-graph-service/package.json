@@ -18,13 +18,11 @@
     "helmet": "^7.0.0",
     "winston": "^3.11.0",
     "mongodb": "^6.0.0",
-    "fhir-kit-client": "^3.0.0",
     "@agada/shared": "*"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",
     "@types/node": "^20.0.0",
-    "@types/fhir-kit-client": "^3.0.0",
     "typescript": "^5.3.0",
     "ts-node-dev": "^2.0.0",
     "jest": "^29.0.0",
