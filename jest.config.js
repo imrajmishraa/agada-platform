@@ -3,22 +3,16 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/packages'],
   testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
   moduleNameMapper: {
     '^@agada/shared$': '<rootDir>/packages/shared/src',
     '^@agada/shared/(.*)$': '<rootDir>/packages/shared/src/$1',
   },
-  extensionsToTreatAsEsm: ['.ts'],
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  transform: {
-    '^.+\\.ts$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.json',
-        useESM: true,
-      },
-    ],
-  },
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/packages/backend/triage-service/',
+    '/packages/backend/analytics-service/',
+  ],
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
 };

@@ -47,32 +47,32 @@ jobs:
       - name: Run linting
         run: npm run test -- --testPathIgnorePatterns=packages/backend/triage-service packages/backend/analytics-service
 
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v3
+  # deploy:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ap-south-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push Docker images
-        run: |
-          for service in packages/backend/*/; do
-            service_name=$(basename "$service")
-            docker build -t ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest -f $service/Dockerfile .
-            docker push ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest
-          done
+  #     - name: Build and push Docker images
+  #       run: |
+  #         for service in packages/backend/*/; do
+  #           service_name=$(basename "$service")
+  #           docker build -t ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest -f $service/Dockerfile .
+  #           docker push ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest
+  #         done
 
-      - name: Deploy to ECS
-        run: |
-          aws ecs update-service --cluster agada-cluster --service agada-service --force-new-deployment
+  #     - name: Deploy to ECS
+  #       run: |
+  #         aws ecs update-service --cluster agada-cluster --service agada-service --force-new-deployment
