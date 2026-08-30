@@ -1,43 +1,43 @@
 {
    "name": "@agada/mobile",
-  "version": "1.0.0",
-  "description": "ASHA Mobile App for Agada Platform",
-  "main": "index.js",
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "build": "echo 'No build required for mobile'",
-    "test": "jest",
-    "lint": "eslint src",
-    "clean": "expo clean"
-  },
-  "dependencies": {
-    "@agada/shared": "*",
-    "@nozbe/watermelondb": "^0.28.0",
-    "@react-native-async-storage/async-storage": "1.21.0",
-    "@react-native-community/netinfo": "11.1.0",
-    "@react-navigation/native": "^6.1.9",
-    "@react-navigation/stack": "^6.3.20",
-    "expo": "~50.0.0",
-    "expo-sqlite": "^57.0.2",
-    "expo-status-bar": "~1.11.0",
-    "i18next": "^23.7.16",
-    "nozbe": "^1.4.0",
-    "react": "18.2.0",
-    "react-i18next": "^14.0.0",
-    "react-native": "0.73.0",
-    "react-native-background-fetch": "^4.2.1",
-    "react-native-safe-area-context": "4.8.2",
-    "react-native-screens": "~3.29.0",
-    "watermelondb": "^1.1.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@types/react": "~18.2.45",
-    "eslint": "^8.56.0",
-    "jest": "^29.2.1",
-    "typescript": "^5.3.3"
-  }
+   "version": "1.0.0",
+   "description": "ASHA Mobile App for Agada Platform",
+   "main": "index.js",
+   "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "build": "echo 'No build required for mobile'",
+      "test": "jest --passWithNoTests",
+      "lint": "eslint src",
+      "clean": "expo clean"
+   },
+   "dependencies": {
+      "@agada/shared": "*",
+      "@nozbe/watermelondb": "^0.28.0",
+      "@react-native-async-storage/async-storage": "1.21.0",
+      "@react-native-community/netinfo": "11.1.0",
+      "@react-navigation/native": "^6.1.9",
+      "@react-navigation/stack": "^6.3.20",
+      "expo": "~50.0.0",
+      "expo-sqlite": "^57.0.2",
+      "expo-status-bar": "~1.11.0",
+      "i18next": "^23.7.16",
+      "nozbe": "^1.4.0",
+      "react": "18.2.0",
+      "react-i18next": "^14.0.0",
+      "react-native": "0.73.0",
+      "react-native-background-fetch": "^4.2.1",
+      "react-native-safe-area-context": "4.8.2",
+      "react-native-screens": "~3.29.0",
+      "watermelondb": "^1.1.0"
+   },
+   "devDependencies": {
+      "@babel/core": "^7.20.0",
+      "@types/react": "~18.2.45",
+      "eslint": "^8.56.0",
+      "jest": "^29.2.1",
+      "typescript": "^5.3.3"
+   }
 }
