@@ -1,5 +1,5 @@
 {
-  "name": "@agada/mobile",
+   "name": "@agada/mobile",
   "version": "1.0.0",
   "description": "ASHA Mobile App for Agada Platform",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export",
+    "build": "echo 'No build required for mobile'",
     "test": "jest",
     "lint": "eslint src",
     "clean": "expo clean"

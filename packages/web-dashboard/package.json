@@ -4,12 +4,14 @@
   "description": "Doctor and Admin Web Dashboard for Agada Platform",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build": "echo 'No build required for mobile'",
+    "test": "jest",
     "lint": "eslint src",
-    "clean": "rm -rf dist"
+    "clean": "expo clean"
   },
   "dependencies": {
     "react": "^18.2.0",
