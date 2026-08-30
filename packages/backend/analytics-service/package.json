@@ -8,5 +8,6 @@
     "build": "echo 'No build required'",
     "test": "pytest",
     "lint": "flake8 src"
-  }
+  },
+  "type": "module"
 }

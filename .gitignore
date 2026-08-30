@@ -46,3 +46,10 @@ postgres_data/
 redis_data/
 elasticsearch_data/
 minio_data/
+
+
+**/dist/
+**/node_modules/
+**/*.js
+**/*.d.ts
+**/*.map

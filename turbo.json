@@ -1,13 +1,14 @@
 {
+  "concurrency": "15",
   "globalDependencies": ["**/.env"],
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
-    },
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
     },
     "test": {
       "dependsOn": ["build"],

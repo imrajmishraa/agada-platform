@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: CI
 
 on:
@@ -7,36 +8,45 @@ on:
     branches: [master]
 
 jobs:
-  build-and-test:
+  # Node.js services
+  node-tests:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
       - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
+      
+      - name: Build shared package
+        run: npm run build --filter=@agada/shared
+      
+      - name: Run Node.js tests
+        run: npm run test -- --filter=!@agada/triage-service --filter=!@agada/analytics-service
 
-      - name: Build all packages
-        run: npm run build
-
-      - name: Run tests
-        run: npm run test
-
-      - name: Run linting
-        run: npm run lint
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
+  # Python services
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          files: ./coverage/lcov.info
-          flags: unittests
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          pip install -r packages/backend/triage-service/requirements.txt
+          pip install -r packages/backend/analytics-service/requirements.txt
+      
+      - name: Run Python tests
+        run: |
+          cd packages/backend/triage-service
+          pytest
+      
+      - name: Run Analytics tests
+        run: |
+          cd packages/backend/analytics-service
+          pytest

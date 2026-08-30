@@ -1,6 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
-export class SimpleSyncService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SimpleSyncService = void 0;
+const async_storage_1 = __importDefault(require("@react-native-async-storage/async-storage"));
+const netinfo_1 = __importDefault(require("@react-native-community/netinfo"));
+class SimpleSyncService {
     static instance;
     isSyncing = false;
     static getInstance() {
@@ -10,7 +16,7 @@ export class SimpleSyncService {
         return SimpleSyncService.instance;
     }
     async sync() {
-        const netInfo = await NetInfo.fetch();
+        const netInfo = await netinfo_1.default.fetch();
         if (!netInfo.isConnected || this.isSyncing)
             return;
         this.isSyncing = true;
@@ -37,7 +43,7 @@ export class SimpleSyncService {
         }
     }
     async getPendingRecords() {
-        const stored = await AsyncStorage.getItem('pending_records');
+        const stored = await async_storage_1.default.getItem('pending_records');
         if (!stored)
             return [];
         const records = JSON.parse(stored);
@@ -68,7 +74,7 @@ export class SimpleSyncService {
         }
     }
     async markSynced(records) {
-        const stored = await AsyncStorage.getItem('pending_records');
+        const stored = await async_storage_1.default.getItem('pending_records');
         const allRecords = stored ? JSON.parse(stored) : [];
         const recordIds = records.map(r => r.id);
         const updatedRecords = allRecords.map((r) => {
@@ -77,17 +83,17 @@ export class SimpleSyncService {
             }
             return r;
         });
-        await AsyncStorage.setItem('pending_records', JSON.stringify(updatedRecords));
+        await async_storage_1.default.setItem('pending_records', JSON.stringify(updatedRecords));
     }
     async getToken() {
-        return (await AsyncStorage.getItem('auth_token')) || '';
+        return (await async_storage_1.default.getItem('auth_token')) || '';
     }
     async updateSyncStatus() {
-        await AsyncStorage.setItem('last_sync', new Date().toISOString());
+        await async_storage_1.default.setItem('last_sync', new Date().toISOString());
     }
     // Add a record to be synced later
     async addPendingRecord(record) {
-        const stored = await AsyncStorage.getItem('pending_records');
+        const stored = await async_storage_1.default.getItem('pending_records');
         const records = stored ? JSON.parse(stored) : [];
         records.push({
             ...record,
@@ -96,7 +102,8 @@ export class SimpleSyncService {
             createdAt: new Date().toISOString(),
             attempts: 0,
         });
-        await AsyncStorage.setItem('pending_records', JSON.stringify(records));
+        await async_storage_1.default.setItem('pending_records', JSON.stringify(records));
     }
 }
+exports.SimpleSyncService = SimpleSyncService;
 //# sourceMappingURL=SimpleSyncService.js.map
