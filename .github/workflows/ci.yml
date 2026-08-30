@@ -25,7 +25,7 @@ jobs:
         run: npm run build --filter=@agada/shared
       
       - name: Run Node.js tests
-        run: npm run test -- --filter=!@agada/triage-service --filter=!@agada/analytics-service
+        run: npm run test
 
   # Python services
   python-tests:
