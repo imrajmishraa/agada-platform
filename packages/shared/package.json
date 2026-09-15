@@ -39,6 +39,11 @@
       "types": "./dist/api/index.d.ts",
       "import": "./dist/api/index.js",
       "default": "./dist/api/index.js"
+    },
+    "./triage": {
+      "types": "./dist/triage/index.d.ts",
+      "import": "./dist/triage/index.js",
+      "default": "./dist/triage/index.js"
     }
   },
   "files": [
