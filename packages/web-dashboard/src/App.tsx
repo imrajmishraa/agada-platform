@@ -11,11 +11,15 @@ import { DoctorDashboard } from '@/pages/DoctorDashboard';
 import { DoctorReferralDetailPage } from '@/pages/DoctorReferralDetailPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { OfflineProvider } from '@/lib/offline/online';
+import { OfflineBanner } from '@/components/OfflineBanner';
 
 export function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <OfflineProvider>
+        <OfflineBanner />
+        <Routes>
         <Route path="/login" element={<LoginPage />} />
 
         <Route element={<ProtectedRoute allowedRoles={['HEALTH_WORKER']} />}>
@@ -39,7 +43,8 @@ export function App() {
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+        </Routes>
+      </OfflineProvider>
     </BrowserRouter>
   );
 }

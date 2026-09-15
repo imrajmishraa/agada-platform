@@ -44,6 +44,11 @@
       "types": "./dist/triage/index.d.ts",
       "import": "./dist/triage/index.js",
       "default": "./dist/triage/index.js"
+    },
+    "./sync": {
+      "types": "./dist/sync/index.d.ts",
+      "import": "./dist/sync/index.js",
+      "default": "./dist/sync/index.js"
     }
   },
   "files": [
