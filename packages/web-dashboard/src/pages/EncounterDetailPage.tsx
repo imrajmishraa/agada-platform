@@ -16,6 +16,9 @@ import {
   type Referral,
 } from '@agada/shared/api';
 import { CreateReferralModal } from '@/components/CreateReferralModal';
+import { recordTriageOffline } from '@agada/shared/sync';
+import { syncQueue } from '@/lib/offline/queue';
+import { useOffline } from '@/lib/offline/online';
 import { supabase } from '@/lib/supabase';
 import { PageHeader } from '@/components/PageHeader';
 import { cn } from '@/lib/utils';
@@ -42,6 +45,8 @@ export function EncounterDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [referralOpen, setReferralOpen] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const { online, refreshPending } = useOffline();
+  const [queuedOffline, setQueuedOffline] = useState(false);
 
   const [vitals, setVitals] = useState({
     temperatureC: '',
@@ -90,26 +95,49 @@ export function EncounterDetailPage() {
     if (!id || !patient) return;
     setRunning(true);
     setError(null);
-    try {
-      const vitalInput: VitalSigns = {
-        temperatureC: vitals.temperatureC ? Number(vitals.temperatureC) : undefined,
-        heartRate: vitals.heartRate ? Number(vitals.heartRate) : undefined,
-        bpSystolic: vitals.bpSystolic ? Number(vitals.bpSystolic) : undefined,
-        bpDiastolic: vitals.bpDiastolic ? Number(vitals.bpDiastolic) : undefined,
-        spo2: vitals.spo2 ? Number(vitals.spo2) : undefined,
-        respiratoryRate: vitals.respiratoryRate ? Number(vitals.respiratoryRate) : undefined,
-      };
+    setQueuedOffline(false);
 
-      const r = await runTriageAssessment(supabase, {
-        encounterId: id,
-        triageInput: {
-          ageYears: patient.age ?? undefined,
-          vitals: vitalInput,
-          symptoms,
-        },
-      });
-      setResult(r);
-      await load();
+    const vitalInput: VitalSigns = {
+      temperatureC: vitals.temperatureC ? Number(vitals.temperatureC) : undefined,
+      heartRate: vitals.heartRate ? Number(vitals.heartRate) : undefined,
+      bpSystolic: vitals.bpSystolic ? Number(vitals.bpSystolic) : undefined,
+      bpDiastolic: vitals.bpDiastolic ? Number(vitals.bpDiastolic) : undefined,
+      spo2: vitals.spo2 ? Number(vitals.spo2) : undefined,
+      respiratoryRate: vitals.respiratoryRate ? Number(vitals.respiratoryRate) : undefined,
+    };
+
+    try {
+      if (!online) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not authenticated');
+
+        const r = await recordTriageOffline(syncQueue, {
+          encounterId: id,
+          patientId: patient.id,
+          assessedBy: user.id,
+          triageInput: {
+            ageYears: patient.age ?? undefined,
+            vitals: vitalInput,
+            symptoms,
+          },
+        });
+        setResult(r);
+        setQueuedOffline(true);
+        await refreshPending();
+      } else {
+        const r = await runTriageAssessment(supabase, {
+          encounterId: id,
+          triageInput: {
+            ageYears: patient.age ?? undefined,
+            vitals: vitalInput,
+            symptoms,
+          },
+        });
+        setResult(r);
+        await load();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to run triage');
     } finally {
@@ -223,8 +251,18 @@ export function EncounterDetailPage() {
             disabled={running}
             className="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
           >
-            {running ? 'Running triage…' : 'Run Triage Assessment'}
+            {running
+              ? 'Running triage…'
+              : online
+                ? 'Run Triage Assessment'
+                : 'Run Triage (offline)'}
           </button>
+
+          {queuedOffline && (
+            <div className="rounded-lg bg-amber-50 px-4 py-3 text-xs text-amber-900 ring-1 ring-amber-200">
+              Saved locally. Will sync when back online.
+            </div>
+          )}
 
           {error && (
             <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
