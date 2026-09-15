@@ -38,6 +38,11 @@ export class SyncQueue {
     return all.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   }
 
+  async getById(id: string): Promise<QueuedOperation | undefined> {
+    const all = await this.adapter.all();
+    return all.find((o) => o.id === id);
+  }
+
   async pending(): Promise<QueuedOperation[]> {
     return (await this.list()).filter(
       (o) => o.status === 'PENDING' || o.status === 'FAILED',
@@ -49,13 +54,13 @@ export class SyncQueue {
   }
 
   async markSyncing(id: string): Promise<void> {
-    const op = await this.get(id);
+    const op = await this.getById(id);
     if (!op) return;
     await this.adapter.put({ ...op, status: 'SYNCING', attempts: op.attempts + 1 });
   }
 
   async markSynced(id: string, serverId: string): Promise<void> {
-    const op = await this.get(id);
+    const op = await this.getById(id);
     if (!op) return;
     await this.adapter.put({
       ...op,
@@ -67,9 +72,23 @@ export class SyncQueue {
   }
 
   async markFailed(id: string, error: string): Promise<void> {
-    const op = await this.get(id);
+    const op = await this.getById(id);
     if (!op) return;
     await this.adapter.put({ ...op, status: 'FAILED', lastError: error });
+  }
+
+  /**
+   * Reset a failed op back to PENDING with attempts=0 so it gets retried.
+   */
+  async retry(id: string): Promise<void> {
+    const op = await this.getById(id);
+    if (!op) return;
+    await this.adapter.put({
+      ...op,
+      status: 'PENDING',
+      attempts: 0,
+      lastError: undefined,
+    });
   }
 
   async clear(): Promise<void> {
@@ -83,8 +102,7 @@ export class SyncQueue {
     }
   }
 
-  private async get(id: string): Promise<QueuedOperation | undefined> {
-    const all = await this.adapter.all();
-    return all.find((o) => o.id === id);
+  async remove(id: string): Promise<void> {
+    await this.adapter.delete(id);
   }
 }

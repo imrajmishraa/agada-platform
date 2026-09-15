@@ -26,6 +26,16 @@ export function AshaDashboard() {
               Track referrals you have created
             </p>
           </Link>
+
+          <Link
+            to="/asha/sync"
+            className="rounded-xl bg-white p-5 ring-1 ring-slate-200 transition hover:ring-brand-500"
+          >
+            <h2 className="text-base font-semibold text-slate-900">Sync Queue</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Offline capture status and retry
+            </p>
+          </Link>
         </div>
       </main>
     </div>
