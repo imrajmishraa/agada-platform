@@ -8,6 +8,7 @@ import { EncounterDetailPage } from '@/pages/EncounterDetailPage';
 import { ReferralsListPage } from '@/pages/ReferralsListPage';
 import { ReferralDetailPage } from '@/pages/ReferralDetailPage';
 import { DoctorDashboard } from '@/pages/DoctorDashboard';
+import { DoctorReferralDetailPage } from '@/pages/DoctorReferralDetailPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
@@ -29,6 +30,7 @@ export function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
           <Route path="/doctor" element={<DoctorDashboard />} />
+          <Route path="/doctor/referrals/:id" element={<DoctorReferralDetailPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>

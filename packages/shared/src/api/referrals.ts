@@ -165,3 +165,121 @@ export function referralStatusLabel(status: ReferralStatus): string {
       return 'Cancelled';
   }
 }
+
+// =============================================================================
+// Doctor workflow
+// =============================================================================
+
+/**
+ * Referrals visible to the current doctor: all referrals not created by them
+ * that are still in an active state.
+ */
+export async function listIncomingReferrals(
+  client: AgadaClient,
+): Promise<Referral[]> {
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await client
+    .from('referrals')
+    .select('*')
+    .neq('created_by', user.id)
+    .in('status', ['CREATED', 'ACCEPTED', 'IN_REVIEW', 'CONSULTATION'])
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function listCompletedReferrals(
+  client: AgadaClient,
+): Promise<Referral[]> {
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await client
+    .from('referrals')
+    .select('*')
+    .neq('created_by', user.id)
+    .eq('status', 'COMPLETED')
+    .order('updated_at', { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function startReview(
+  client: AgadaClient,
+  referralId: string,
+): Promise<Referral> {
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: current } = await client
+    .from('referrals')
+    .select('status')
+    .eq('id', referralId)
+    .single();
+
+  const { data, error } = await client
+    .from('referrals')
+    .update({ status: 'IN_REVIEW', updated_at: new Date().toISOString() })
+    .eq('id', referralId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await client.from('referral_events').insert({
+    referral_id: referralId,
+    from_status: current?.status ?? null,
+    to_status: 'IN_REVIEW',
+    actor_id: user.id,
+    comment: 'Doctor started review',
+  });
+
+  return data;
+}
+
+export async function rejectReferral(
+  client: AgadaClient,
+  referralId: string,
+  reason: string,
+): Promise<Referral> {
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: current } = await client
+    .from('referrals')
+    .select('status')
+    .eq('id', referralId)
+    .single();
+
+  const { data, error } = await client
+    .from('referrals')
+    .update({ status: 'REJECTED', updated_at: new Date().toISOString() })
+    .eq('id', referralId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await client.from('referral_events').insert({
+    referral_id: referralId,
+    from_status: current?.status ?? null,
+    to_status: 'REJECTED',
+    actor_id: user.id,
+    comment: reason,
+  });
+
+  return data;
+}
