@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   getPatient,
   listEncountersForPatient,
@@ -159,10 +159,11 @@ export function PatientProfilePage() {
             ) : (
               <ul className="divide-y divide-slate-100">
                 {encounters.map((e) => (
-                  <li
-                    key={e.id}
-                    className="flex items-center justify-between px-5 py-3 text-sm"
-                  >
+                  <li key={e.id}>
+                    <Link
+                      to={`/asha/encounters/${e.id}`}
+                      className="flex items-center justify-between px-5 py-3 text-sm hover:bg-slate-50"
+                    >
                     <div>
                       <p className="font-medium text-slate-900">
                         {e.encounter_type?.replace('_', ' ') ?? 'Encounter'}
@@ -179,7 +180,8 @@ export function PatientProfilePage() {
                       }
                     >
                       {e.status}
-                    </span>
+                      </span>
+                    </Link>
                   </li>
                 ))}
               </ul>
