@@ -2,7 +2,7 @@
   "name": "agada-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "Agada \u2014 Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
+  "description": "Agada — Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
   "license": "UNLICENSED",
   "author": "Agada Team",
   "repository": {
@@ -55,6 +55,8 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.2",
