@@ -15,11 +15,14 @@ import { AdminDashboard } from '@/pages/AdminDashboard';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { OfflineProvider } from '@/lib/offline/online';
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 
 export function App() {
   return (
     <BrowserRouter>
-      <OfflineProvider>
+      <ErrorBoundary>
+        <OfflineProvider>
         <OfflineBanner />
         <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -46,9 +49,10 @@ export function App() {
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </OfflineProvider>
+        </OfflineProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
