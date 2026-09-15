@@ -54,3 +54,7 @@ minio_data/
 **/build/**/*.js
 **/build/**/*.d.ts
 **/build/**/*.map
+
+# Turbo cache
+.turbo/
+**/.turbo/
