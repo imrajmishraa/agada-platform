@@ -8,6 +8,7 @@ import { EncounterDetailPage } from '@/pages/EncounterDetailPage';
 import { ReferralsListPage } from '@/pages/ReferralsListPage';
 import { ReferralDetailPage } from '@/pages/ReferralDetailPage';
 import { SyncPage } from '@/pages/SyncPage';
+import { FacilityDashboard } from '@/pages/FacilityDashboard';
 import { DoctorDashboard } from '@/pages/DoctorDashboard';
 import { DoctorReferralDetailPage } from '@/pages/DoctorReferralDetailPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
@@ -41,6 +42,7 @@ export function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/facility" element={<FacilityDashboard />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
