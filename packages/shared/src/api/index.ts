@@ -4,3 +4,4 @@ export * from './vitals.js';
 export * from './triage.js';
 export * from './facilities.js';
 export * from './referrals.js';
+export * from './clinical.js';

@@ -5,12 +5,16 @@ import {
   getPatient,
   getFacility,
   listReferralEvents,
+  listClinicalNotesForReferral,
+  listDiagnosesForEncounter,
   referralStatusLabel,
   facilityTypeLabel,
   type Referral,
   type ReferralEvent,
   type Patient,
   type Facility,
+  type ClinicalNote,
+  type Diagnosis,
 } from '@agada/shared/api';
 import { supabase } from '@/lib/supabase';
 import { PageHeader } from '@/components/PageHeader';
@@ -22,6 +26,8 @@ export function ReferralDetailPage() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [destination, setDestination] = useState<Facility | null>(null);
   const [events, setEvents] = useState<ReferralEvent[]>([]);
+  const [notes, setNotes] = useState<ClinicalNote[]>([]);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,16 +42,20 @@ export function ReferralDetailPage() {
       }
       setReferral(r);
 
-      const [p, d, ev] = await Promise.all([
+      const [p, d, ev, ns, ds] = await Promise.all([
         getPatient(supabase, r.patient_id),
         r.destination_facility_id
           ? getFacility(supabase, r.destination_facility_id)
           : Promise.resolve(null),
         listReferralEvents(supabase, id),
+        listClinicalNotesForReferral(supabase, id),
+        listDiagnosesForEncounter(supabase, r.encounter_id),
       ]);
       setPatient(p);
       setDestination(d);
       setEvents(ev);
+      setNotes(ns);
+      setDiagnoses(ds);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load referral');
     } finally {
@@ -126,6 +136,48 @@ export function ReferralDetailPage() {
               {referral.reason || '—'}
             </p>
           </section>
+
+
+          {(notes.length > 0 || diagnoses.length > 0) && (
+            <section className="rounded-xl border-2 border-emerald-300 bg-emerald-50 p-5">
+              <h2 className="mb-3 text-sm font-semibold text-emerald-900">
+                Doctor Outcome
+              </h2>
+
+              {diagnoses.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800/70">
+                    Diagnosis
+                  </p>
+                  <ul className="mt-1 space-y-1">
+                    {diagnoses.map((d) => (
+                      <li key={d.id} className="text-sm text-emerald-900">
+                        • {d.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {notes.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800/70">
+                    Clinical Notes
+                  </p>
+                  <ul className="mt-1 space-y-2">
+                    {notes.map((n) => (
+                      <li key={n.id} className="text-sm text-emerald-900">
+                        <p className="whitespace-pre-wrap">{n.content}</p>
+                        <p className="mt-1 text-xs text-emerald-800/70">
+                          {new Date(n.created_at).toLocaleString()}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </section>
+          )}
 
           {patient && (
             <Link
