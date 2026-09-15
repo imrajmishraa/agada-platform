@@ -7,6 +7,7 @@ import { PatientProfilePage } from '@/pages/PatientProfilePage';
 import { EncounterDetailPage } from '@/pages/EncounterDetailPage';
 import { ReferralsListPage } from '@/pages/ReferralsListPage';
 import { ReferralDetailPage } from '@/pages/ReferralDetailPage';
+import { SyncPage } from '@/pages/SyncPage';
 import { DoctorDashboard } from '@/pages/DoctorDashboard';
 import { DoctorReferralDetailPage } from '@/pages/DoctorReferralDetailPage';
 import { AdminDashboard } from '@/pages/AdminDashboard';
@@ -30,6 +31,7 @@ export function App() {
           <Route path="/asha/encounters/:id" element={<EncounterDetailPage />} />
           <Route path="/asha/referrals" element={<ReferralsListPage />} />
           <Route path="/asha/referrals/:id" element={<ReferralDetailPage />} />
+          <Route path="/asha/sync" element={<SyncPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['DOCTOR']} />}>
