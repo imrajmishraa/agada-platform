@@ -17,10 +17,15 @@ export function AshaDashboard() {
             </p>
           </Link>
 
-          <div className="rounded-xl bg-white/60 p-5 ring-1 ring-slate-200">
-            <h2 className="text-base font-semibold text-slate-400">Triage</h2>
-            <p className="mt-1 text-sm text-slate-400">Coming Day 4</p>
-          </div>
+          <Link
+            to="/asha/referrals"
+            className="rounded-xl bg-white p-5 ring-1 ring-slate-200 transition hover:ring-brand-500"
+          >
+            <h2 className="text-base font-semibold text-slate-900">Referrals</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Track referrals you have created
+            </p>
+          </Link>
         </div>
       </main>
     </div>

@@ -1,17 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   getEncounter,
   getPatient,
   runTriageAssessment,
   listTriageForEncounter,
+  listReferralsForPatient,
   type Encounter,
   type Patient,
   type TriageAssessment,
   type TriageResult,
   type VitalSigns,
   type Symptoms,
+  type Referral,
 } from '@agada/shared/api';
+import { CreateReferralModal } from '@/components/CreateReferralModal';
 import { supabase } from '@/lib/supabase';
 import { PageHeader } from '@/components/PageHeader';
 import { cn } from '@/lib/utils';
@@ -36,6 +40,8 @@ export function EncounterDetailPage() {
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<TriageResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [referralOpen, setReferralOpen] = useState(false);
+  const [referrals, setReferrals] = useState<Referral[]>([]);
 
   const [vitals, setVitals] = useState({
     temperatureC: '',
@@ -57,12 +63,14 @@ export function EncounterDetailPage() {
         return;
       }
       setEncounter(e);
-      const [p, h] = await Promise.all([
+      const [p, h, r] = await Promise.all([
         getPatient(supabase, e.patient_id),
         listTriageForEncounter(supabase, id),
+        listReferralsForPatient(supabase, e.patient_id),
       ]);
       setPatient(p);
       setHistory(h);
+      setReferrals(r);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load encounter');
     } finally {
@@ -226,7 +234,44 @@ export function EncounterDetailPage() {
         </div>
 
         <div className="space-y-6 lg:col-span-2">
-          {result && <TriageResultCard result={result} />}
+          {result && (
+            <TriageResultCard
+              result={result}
+              onCreateReferral={() => setReferralOpen(true)}
+              canCreateReferral={
+                result.riskLevel === 'HIGH' &&
+                !referrals.some((r) => r.encounter_id === id && r.status !== 'CANCELLED')
+              }
+            />
+          )}
+
+          {referrals.length > 0 && (
+            <section className="rounded-xl bg-white ring-1 ring-slate-200">
+              <div className="border-b border-slate-100 px-5 py-3">
+                <h2 className="text-sm font-semibold text-slate-900">Referrals</h2>
+              </div>
+              <ul className="divide-y divide-slate-100">
+                {referrals.map((r) => (
+                  <li key={r.id}>
+                    <Link
+                      to={`/asha/referrals/${r.id}`}
+                      className="flex items-center justify-between px-5 py-3 text-sm hover:bg-slate-50"
+                    >
+                      <div>
+                        <p className="font-medium text-slate-900">{r.urgency}</p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(r.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                        {r.status}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {history.length > 0 && (
             <section className="rounded-xl bg-white ring-1 ring-slate-200">
@@ -261,6 +306,17 @@ export function EncounterDetailPage() {
           )}
         </div>
       </main>
+
+      {result && patient && encounter && (
+        <CreateReferralModal
+          open={referralOpen}
+          onClose={() => setReferralOpen(false)}
+          onCreated={() => void load()}
+          patientId={patient.id}
+          encounterId={encounter.id}
+          triageResult={result}
+        />
+      )}
     </div>
   );
 }
@@ -291,7 +347,15 @@ function VitalField({
   );
 }
 
-function TriageResultCard({ result }: { result: TriageResult }) {
+function TriageResultCard({
+  result,
+  onCreateReferral,
+  canCreateReferral,
+}: {
+  result: TriageResult;
+  onCreateReferral: () => void;
+  canCreateReferral: boolean;
+}) {
   const styles = {
     HIGH: 'border-red-300 bg-red-50 text-red-900',
     MEDIUM: 'border-amber-300 bg-amber-50 text-amber-900',
@@ -345,6 +409,15 @@ function TriageResultCard({ result }: { result: TriageResult }) {
           ))}
         </ul>
       </div>
+
+      {canCreateReferral && (
+        <button
+          onClick={onCreateReferral}
+          className="mt-5 w-full rounded-lg bg-red-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-800"
+        >
+          Create Referral
+        </button>
+      )}
     </section>
   );
 }
