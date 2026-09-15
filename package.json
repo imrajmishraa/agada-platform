@@ -2,7 +2,7 @@
   "name": "agada-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "Agada — Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
+  "description": "Agada \u2014 Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
   "license": "UNLICENSED",
   "author": "Agada Team",
   "repository": {
@@ -10,7 +10,7 @@
     "url": "https://github.com/rajmishra/agada-platform.git"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.0.0",
     "npm": ">=10.0.0"
   },
   "packageManager": "npm@10.8.0",
@@ -74,7 +74,7 @@
     ]
   },
   "volta": {
-    "node": "20.11.1",
+    "node": "22.13.0",
     "npm": "10.8.0"
   }
 }
