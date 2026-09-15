@@ -9,3 +9,6 @@ matplotlib==3.8.2
 seaborn==0.13.0
 plotly==5.17.0
 python-dotenv==1.0.0
+pytest==7.4.0
+pytest-cov==4.1.0
+flake8==6.1.0
