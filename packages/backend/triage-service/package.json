@@ -1,12 +1,14 @@
 {
   "name": "@agada/triage-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Digital Triage & ML Risk Scoring Service (Python)",
+  "type": "module",
   "scripts": {
     "dev": "uvicorn src.main:app --reload --host 0.0.0.0 --port 3003",
-    "build": "echo 'No build required'",
-    "test": "pytest --cov=src --cov-report=xml --cov-fail-under=0",
-    "lint": "flake8 src"
+    "build": "echo 'no build required (python)'",
+    "test": "echo 'python tests run in dedicated CI job'",
+    "lint": "echo 'python lint runs in dedicated CI job'",
+    "clean": "rm -rf __pycache__ .pytest_cache .coverage"
   }
 }

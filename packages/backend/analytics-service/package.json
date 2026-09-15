@@ -1,13 +1,14 @@
 {
   "name": "@agada/analytics-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Analytics & Reporting Service (Python)",
+  "type": "module",
   "scripts": {
     "dev": "uvicorn src.main:app --reload --host 0.0.0.0 --port 3010",
-    "build": "echo 'No build required'",
-    "test": "pytest",
-    "lint": "flake8 src"
-  },
-  "type": "module"
+    "build": "echo 'no build required (python)'",
+    "test": "echo 'python tests run in dedicated CI job'",
+    "lint": "echo 'python lint runs in dedicated CI job'",
+    "clean": "rm -rf __pycache__ .pytest_cache .coverage"
+  }
 }
