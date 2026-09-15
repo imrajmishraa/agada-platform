@@ -34,7 +34,12 @@
       "import": "./dist/auth/session.js",
       "default": "./dist/auth/session.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js",
+      "default": "./dist/api/index.js"
+    }
   },
   "files": [
     "dist",
