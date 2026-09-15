@@ -1,7 +1,6 @@
-import { run, getFirst, query } from './index';
+import { run } from './index';
 import * as SQLite from 'expo-sqlite';
 
-// Each migration is a function that runs SQL statements
 type Migration = {
   version: number;
   up: (db: SQLite.SQLiteDatabase) => Promise<void>;
@@ -11,7 +10,6 @@ export const migrations: Migration[] = [
   {
     version: 2,
     up: async (db) => {
-      // Example: Add a new column to patients table
       await db.execAsync(`
         ALTER TABLE patients ADD COLUMN blood_group TEXT;
       `);
@@ -20,7 +18,6 @@ export const migrations: Migration[] = [
   {
     version: 3,
     up: async (db) => {
-      // Example: Add a new table for medications
       await db.execAsync(`
         CREATE TABLE IF NOT EXISTS medications (
           id TEXT PRIMARY KEY,
@@ -46,7 +43,8 @@ export const runMigrations = async (currentSchemaVersion: number) => {
       await migration.up(db);
     }
   }
-  // Update schema version in meta table
   const maxVersion = migrations.reduce((max, m) => Math.max(max, m.version), 1);
-  await run('UPDATE meta SET value = ? WHERE key = "schema_version"', [String(maxVersion)]);
+  await run('UPDATE meta SET value = ? WHERE key = "schema_version"', [
+    String(maxVersion),
+  ]);
 };
