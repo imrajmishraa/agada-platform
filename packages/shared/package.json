@@ -1,25 +1,61 @@
 {
   "name": "@agada/shared",
-  "version": "1.0.0",
-  "description": "Shared utilities, types, and constants for Agada Platform",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared utilities, types, env schemas, and constants for Agada Platform",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./env": {
+      "types": "./dist/env/env.d.ts",
+      "import": "./dist/env/env.js",
+      "default": "./dist/env/env.js"
+    },
+    "./supabase": {
+      "types": "./dist/supabase/database.types.d.ts",
+      "import": "./dist/supabase/database.types.js",
+      "default": "./dist/supabase/database.types.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "lint": "eslint src",
-    "clean": "rm -rf dist"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "clean": "rm -rf dist .turbo coverage node_modules/.cache"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
-    "zod": "^3.22.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/jest": "^29.0.0",
-    "eslint": "^8.56.0",
-    "jest": "^29.0.0",
-    "ts-jest": "^29.0.0",
-    "typescript": "^5.3.0"
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

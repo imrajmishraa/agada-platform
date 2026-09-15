@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -12,13 +13,11 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "paths": {
-      "@agada/shared": ["./packages/shared/src"],
-      "@agada/shared/*": ["./packages/shared/src/*"],
-      "@agada/types": ["./packages/shared/src/types"],
-      "@agada/utils": ["./packages/shared/src/utils"],
-      "@agada/constants": ["./packages/shared/src/constants"]
-    }
+    "noEmit": true,
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["node_modules", "dist", "build"]
+  "exclude": ["node_modules", "dist", "build", ".next", ".turbo", "coverage"]
 }

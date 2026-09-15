@@ -1,39 +1,80 @@
 {
   "name": "agada-platform",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Integrated Digital Care Platform for Rural Maharashtra",
-  "workspaces": [
-    "packages/*",
-    "packages/backend/*",
-    "packages/shared"
-  ],
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "test": "jest --passWithNoTests",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "clean": "turbo run clean && rm -rf node_modules",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "db:seed": "node scripts/seed-db.js",
-    "prepare": "husky install"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.0.0",
-    "eslint": "^8.0.0",
-    "husky": "^8.0.0",
-    "jest": "^29.0.0",
-    "lint-staged": "^13.0.0",
-    "prettier": "^3.0.0",
-    "ts-jest": "^29.0.0",
-    "turbo": "^2.10.12",
-    "typescript": "^5.0.0"
+  "description": "Agada — Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
+  "license": "UNLICENSED",
+  "author": "Agada Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rajmishra/agada-platform.git"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
-  "packageManager": "npm@9.0.0"
+  "packageManager": "npm@10.8.0",
+  "workspaces": [
+    "packages/*",
+    "packages/backend/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=@agada/web-dashboard",
+    "dev:mobile": "turbo run dev --filter=@agada/mobile",
+    "dev:auth": "turbo run dev --filter=@agada/auth-service",
+    "build": "turbo run build",
+    "build:clean": "npm run clean && npm run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:coverage": "turbo run test:coverage",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "clean:cache": "rm -rf .turbo node_modules/.cache",
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:diff": "supabase db diff",
+    "db:types": "supabase gen types typescript --project-id wojygubhmcxhocihuohl > packages/shared/src/supabase/database.types.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "docker:up": "docker compose -f docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker-compose.yml down",
+    "docker:logs": "docker compose logs -f",
+    "prepare": "husky install",
+    "precommit": "lint-staged",
+    "postinstall": "turbo run build --filter=@agada/shared"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.0.11",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "ts-jest": "^29.1.2",
+    "tsx": "^4.7.1",
+    "turbo": "^2.10.12",
+    "typescript": "^5.4.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "volta": {
+    "node": "20.11.1",
+    "npm": "10.8.0"
+  }
 }
