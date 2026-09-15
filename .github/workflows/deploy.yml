@@ -9,25 +9,20 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build shared package
-        run: npm run build --filter=@agada/shared
+        run: npm run build --workspace=@agada/shared
 
       - name: Build all packages
         run: npm run build
@@ -35,44 +30,23 @@ jobs:
       - name: Run tests
         run: npm run test
 
-      # Fix: ensure flake8 is available before linting
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install flake8
         run: pip install flake8
 
-      - name: Run linting
-        run: npm run test -- --testPathIgnorePatterns=packages/backend/triage-service packages/backend/analytics-service
-
   # deploy:
   #   needs: build-and-test
   #   runs-on: ubuntu-latest
   #   if: github.ref == 'refs/heads/master'
   #   steps:
-  #     - uses: actions/checkout@v3
-
+  #     - uses: actions/checkout@v4
   #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v2
+  #       uses: aws-actions/configure-aws-credentials@v4
   #       with:
   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   #         aws-region: ap-south-1
-
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
-
-  #     - name: Build and push Docker images
-  #       run: |
-  #         for service in packages/backend/*/; do
-  #           service_name=$(basename "$service")
-  #           docker build -t ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest -f $service/Dockerfile .
-  #           docker push ${{ steps.login-ecr.outputs.registry }}/agada-$service_name:latest
-  #         done
-
-  #     - name: Deploy to ECS
-  #       run: |
-  #         aws ecs update-service --cluster agada-cluster --service agada-service --force-new-deployment
