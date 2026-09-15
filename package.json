@@ -2,7 +2,7 @@
   "name": "agada-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "Agada — Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
+  "description": "Agada - Integrated Digital Care Platform for Rural Maharashtra (SIH Prototype)",
   "license": "UNLICENSED",
   "author": "Agada Team",
   "repository": {
@@ -64,7 +64,7 @@
     "ts-jest": "^29.1.2",
     "tsx": "^4.7.1",
     "turbo": "^2.10.12",
-    "typescript": "^5.4.3"
+    "typescript": "~5.5.4"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
