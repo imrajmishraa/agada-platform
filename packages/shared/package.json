@@ -20,9 +20,19 @@
       "default": "./dist/env/env.js"
     },
     "./supabase": {
+      "types": "./dist/supabase/index.d.ts",
+      "import": "./dist/supabase/index.js",
+      "default": "./dist/supabase/index.js"
+    },
+    "./supabase/types": {
       "types": "./dist/supabase/database.types.d.ts",
       "import": "./dist/supabase/database.types.js",
       "default": "./dist/supabase/database.types.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/session.d.ts",
+      "import": "./dist/auth/session.js",
+      "default": "./dist/auth/session.js"
     },
     "./package.json": "./package.json"
   },

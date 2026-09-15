@@ -58,3 +58,7 @@ minio_data/
 # Turbo cache
 .turbo/
 **/.turbo/
+# Vite / package-specific env files (keep .env.example)
+.env
+.env.*
+!.env.example
